@@ -1,9 +1,8 @@
-
-////// SPDX-License-Identifier-FLATTEN-SUPPRESS-WARNING: GPL-3.0
+// SPDX-License-Identifier: GPL-3.0
 
 pragma solidity >= 0.8.16;
 
-////import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC20/IERC20.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v4.0.0/contracts/token/ERC20/IERC20.sol";
 
 contract staking_REWARDS{
 
@@ -83,11 +82,14 @@ contract staking_REWARDS{
         emit UnStaked(msg.sender,_amount);
     }
 
+    function _min(uint _x, uint _y) private pure returns(uint){
+        return _x <= _y ? _x : _y ;
+    }
 
 // getter when rewards yearned till now should be returned
     function UpdateRewards() public {
         require(total_staked != 0,"no tokens staked yet");
-        rewardpertoken_staked = rewardRATE * ((block.timestamp - last_rewardupdate)/ total_staked); 
+        rewardpertoken_staked = rewardRATE * (_min(block.timestamp,expiresAt) - last_rewardupdate)/ total_staked; 
 
         rewards[msg.sender] += usertokens_staked[msg.sender] * rewardpertoken_staked;       
     }
